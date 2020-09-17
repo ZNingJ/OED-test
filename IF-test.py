@@ -500,7 +500,7 @@ if __name__ == '__main__':
     save_model = False
     batch_num = 1
     hidden_num = 8
-    k_partition = 100
+    k_partition = 80
     iteration = 30
     cell_type = 1
     ensemble_space = 20
@@ -759,7 +759,7 @@ if __name__ == '__main__':
                 # print('-----------------------------------------')
                 final_error = np.concatenate(final_error).ravel()
                 final_zscore = Z_Score(final_error)
-                y_pred = CreateLabelBasedOnZscore(final_zscore, 1)
+                y_pred = CreateLabelBasedOnZscore(final_zscore, 0.5)
                 print('abnormal_label:{0}'.format(abnormal_label))
                 print('anomaly_label:{0}'.format(Counter(abnormal_label)))
                 print('y_pred:{0}'.format(y_pred))

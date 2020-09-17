@@ -571,7 +571,7 @@ if __name__ == '__main__':
     save_model = False
     batch_num = 1
     hidden_num = 8
-    k_partition = 100
+    k_partition = 120
     iteration = 100
     cell_type = 1
     ensemble_space = 20
@@ -685,7 +685,7 @@ if __name__ == '__main__':
     # print('########################################')
 
     for n in range(1,4):
-        dataset = 3
+        dataset = 2
         if dataset==1:
             elem_num = 618
             _file_name = r"data/ISOLET-23/data_23.dat"
@@ -830,7 +830,7 @@ if __name__ == '__main__':
                 # print('-----------------------------------------')
                 final_error = np.concatenate(final_error).ravel()
                 final_zscore = Z_Score(final_error)
-                y_pred = CreateLabelBasedOnZscore(final_zscore, 1)
+                y_pred = CreateLabelBasedOnZscore(final_zscore, 0.5)
 
                 print(abnormal_label)
                 print(Counter(abnormal_label))
