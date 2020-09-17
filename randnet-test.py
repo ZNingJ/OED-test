@@ -6,6 +6,7 @@ import pandas as pd
 import tensorflow as tf
 from utils import *
 from collections import Counter
+import time
 
 def Model(_abnormal_data, _abnormal_label, _hidden_num, _file_name):
     tf.reset_default_graph()
@@ -76,15 +77,14 @@ def RunModel(_abnormal_data, _abnormal_label, _hidden_num, _file_name):
 
     zscore = Z_Score(anomaly_score)
     y_pred = CreateLabelBasedOnZscore(zscore, 0.5)
-    print('anomaly_score:{0}'.format(anomaly_score))
-    print('y_pred:{0}'.format(y_pred))
     print('_abnormal_label:{0}'.format(_abnormal_label))
     print('anomaly_score:{0}'.format(Counter(_abnormal_label)))
+    print('y_pred:{0}'.format(y_pred))
     print('y_pred:{0}'.format(Counter(y_pred)))
 
     result_temp=[]
-    temp_list=[5,10,30,60,90,120,130,140,150,200,300,340]
-    max_pred=Counter(_abnormal_label)[-1]
+    temp_list=[1000,2000,3000,4000,5000,6000,6598]
+    max_pred=Counter(y_pred)[-1]
     print('max_pred:{0}'.format(max_pred))
     for m in temp_list:
         m_count=0
@@ -93,10 +93,12 @@ def RunModel(_abnormal_data, _abnormal_label, _hidden_num, _file_name):
             m=max_pred
         for index, j in enumerate(y_pred):
             if m_count<m:
-                if j==-1:
-                    m_count+=1
-                    if _abnormal_label[index]==-1:
-                        real_count+=1
+                if j == -1:
+                    m_count += 1
+                    if _abnormal_label[index] == -1:
+                        real_count += 1
+                if index == len(y_pred) - 1:
+                    result_temp.append(real_count)
             else:
                 result_temp.append(real_count)
                 break
@@ -119,15 +121,18 @@ if __name__ == '__main__':
     save_model = False
     _normalize = True
 
-    dataset = 1
+    dataset = 2
     if dataset == 1:
         _file_name = r"data/ionosphere.txt"
-
+        print(_file_name)
+        print('从当前时间开始:{0}'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
         abnormal_data = np.loadtxt(_file_name, delimiter=",", usecols=np.arange(0, 34))
         abnormal_label = np.loadtxt(_file_name, delimiter=",", usecols=(-1,))
         # abnormal_label = np.expand_dims(abnormal_label, axis=1)
     else:
         _file_name = r"data/clean2.data"
+        print(_file_name)
+        print('从当前时间开始:{0}'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
         X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=',')
         abnormal_data = X.iloc[:, 2:168].as_matrix()
         abnormal_label = X.iloc[:, 168].as_matrix()
@@ -141,6 +146,8 @@ if __name__ == '__main__':
 
 
     # _file_name = r"data/ISOLET-23/data_23.dat"
+    # print(_file_name)
+    # print('从当前时间开始:{0}'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
     # X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=',')
     # abnormal_data = X.as_matrix()
     # y_loc = r"data/ISOLET-23/classid_23.dat"
@@ -154,6 +161,8 @@ if __name__ == '__main__':
     # abnormal_label[abnormal_label == 23] = -1
 
     # _file_name = r"data/MF-3/data_3.dat"
+    # print(_file_name)
+    # print('从当前时间开始:{0}'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
     # X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=',')
     # abnormal_data = X.as_matrix()
     # y_loc = r"data/MF-3/classid_3.dat"
@@ -167,6 +176,8 @@ if __name__ == '__main__':
     # abnormal_label[abnormal_label == 3] = -1
 
     # _file_name = r"data/Arrhythmia_withoutdupl_05_v03.dat"   #以2为分割点
+    # print(_file_name)
+    # print('从当前时间开始:{0}'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
     # X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=' ')
     # abnormal_data = X.iloc[:, :260].as_matrix()
     # abnormal_label = X.iloc[:, 260].as_matrix()

@@ -7,6 +7,7 @@ from utils import *
 from tensorflow.contrib import seq2seq
 import time
 from collections import Counter
+import time
 
 class RLSTMCell(tf.nn.rnn_cell.BasicLSTMCell):
     """Basic LSTM recurrent network cell.
@@ -624,13 +625,13 @@ if __name__ == '__main__':
     #     final_zscore = Z_Score(final_error)
     #     y_pred = CreateLabelBasedOnZscore(final_zscore, 0.5)
     #     print('abnormal_label:{0}'.format(abnormal_label))
-    #     print('anomaly_label:{0}'.format(Counter(abnormal_label)))
+    #     print('abnormal_label:{0}'.format(Counter(abnormal_label)))
     #     print('y_pred:{0}'.format(y_pred))
     #     print('y_pred:{0}'.format(Counter(y_pred)))
     #
     #     result_temp = []
     #     temp_list = [5, 10, 30,60,90,120,130,140,150,200,300,340]
-    #     max_pred = Counter(abnormal_label)[-1]
+    #     max_pred = Counter(y_pred)[-1]
     #     print('max_pred:{0}'.format(max_pred))
     #     for m in temp_list:
     #         m_count = 0
@@ -648,7 +649,7 @@ if __name__ == '__main__':
     #              else:
     #                 result_temp.append(real_count)
     #                 break
-    #     print(result_temp)
+    #     print('result_temp:{0}'.format(result_temp))
     #
     #     precision, recall, f1 = CalculatePrecisionRecallF1Metrics(abnormal_label, y_pred)
     #     PrintPrecisionRecallF1Metrics(precision, recall, f1)
@@ -690,6 +691,7 @@ if __name__ == '__main__':
             elem_num = 618
             _file_name = r"data/ISOLET-23/data_23.dat"
             print(_file_name)
+            print('从当前时间开始:{0}'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
             X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=',')
             abnormal_data = X.as_matrix()
 
@@ -729,14 +731,15 @@ if __name__ == '__main__':
                 final_zscore = Z_Score(final_error)
                 y_pred = CreateLabelBasedOnZscore(final_zscore, 1)
 
-                print(abnormal_label)
-                print(Counter(abnormal_label))
-                print(y_pred)
-                print(Counter(y_pred))
+                print('abnormal_label:{0}'.format(abnormal_label))
+                print('abnormal_label:{0}'.format(Counter(abnormal_label)))
+                print('y_pred:{0}'.format(y_pred))
+                print('y_pred:{0}'.format(Counter(y_pred)))
 
                 result_temp = []
                 temp_list = [5, 10, 15, 20, 30, 50, 60, 80, 100, 150]
-                max_pred = Counter(abnormal_label)[-1]
+                max_pred = Counter(y_pred)[-1]
+                print('max_pred:{0}'.format(max_pred))
                 for m in temp_list:
                     m_count = 0
                     real_count = 0
@@ -753,7 +756,7 @@ if __name__ == '__main__':
                         else:
                             result_temp.append(real_count)
                             break
-                print(result_temp)
+                print('result_temp:{0}'.format(result_temp))
 
                 precision, recall, f1 = CalculatePrecisionRecallF1Metrics(abnormal_label, y_pred)
                 PrintPrecisionRecallF1Metrics(precision, recall, f1)
@@ -793,6 +796,7 @@ if __name__ == '__main__':
             elem_num = 650
             _file_name = r"data/MF-3/data_3.dat"
             print(_file_name)
+            print('从当前时间开始:{0}'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
             X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=',')
             abnormal_data = X.as_matrix()
 
@@ -832,14 +836,14 @@ if __name__ == '__main__':
                 final_zscore = Z_Score(final_error)
                 y_pred = CreateLabelBasedOnZscore(final_zscore, 0.5)
 
-                print(abnormal_label)
-                print(Counter(abnormal_label))
-                print(y_pred)
-                print(Counter(y_pred))
-
+                print('abnormal_label:{0}'.format(abnormal_label))
+                print('abnormal_label:{0}'.format(Counter(abnormal_label)))
+                print('y_pred:{0}'.format(y_pred))
+                print('y_pred:{0}'.format(Counter(y_pred)))
                 result_temp = []
                 temp_list = [20, 30, 50, 60, 90, 100, 150]
-                max_pred = Counter(abnormal_label)[-1]
+                max_pred = Counter(y_pred)[-1]
+                print('max_pred:{0}'.format(max_pred))
                 for m in temp_list:
                     m_count = 0
                     real_count = 0
@@ -858,7 +862,7 @@ if __name__ == '__main__':
                         else:
                             result_temp.append(real_count)
                             break
-                print(result_temp)
+                print('result_temp:{0}'.format(result_temp))
 
                 precision, recall, f1 = CalculatePrecisionRecallF1Metrics(abnormal_label, y_pred)
                 PrintPrecisionRecallF1Metrics(precision, recall, f1)
@@ -898,6 +902,7 @@ if __name__ == '__main__':
             elem_num = 260
             _file_name = r"data/Arrhythmia_withoutdupl_05_v03.dat"
             print(_file_name)
+            print('从当前时间开始:{0}'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
             X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=' ')
             abnormal_data = X.iloc[:, :260].as_matrix()
             abnormal_label = X.iloc[:, 260].as_matrix()
@@ -933,15 +938,15 @@ if __name__ == '__main__':
                 final_error = np.concatenate(final_error).ravel()
                 final_zscore = Z_Score(final_error)
                 y_pred = CreateLabelBasedOnZscore(final_zscore, 0.45)
+
                 print('abnormal_label:{0}'.format(abnormal_label))
-                print('anomaly_label:{0}'.format(Counter(abnormal_label)))
+                print('abnormal_label:{0}'.format(Counter(abnormal_label)))
                 print('y_pred:{0}'.format(y_pred))
                 print('y_pred:{0}'.format(Counter(y_pred)))
-
                 result_temp = []
                 temp_list = [5, 10, 15, 25, 30, 35, 45, 50, 55, 60, 80, 90, 100, 110, 120, 140, 150, 160, 170, 180, 190,
                              200]
-                max_pred = Counter(abnormal_label)[-1]
+                max_pred = Counter(y_pred)[-1]
                 print('max_pre:{0}'.format(max_pred))
                 for m in temp_list:
                     m_count = 0
@@ -959,7 +964,7 @@ if __name__ == '__main__':
                          else:
                             result_temp.append(real_count)
                             break
-                print(result_temp)
+                print('result_temp:{0}'.format(result_temp))
 
                 precision, recall, f1 = CalculatePrecisionRecallF1Metrics(abnormal_label, y_pred)
                 PrintPrecisionRecallF1Metrics(precision, recall, f1)
