@@ -7,7 +7,7 @@ from utils import *
 from tensorflow.contrib import seq2seq
 import time
 from collections import Counter
-import time
+import datetime
 
 class RLSTMCell(tf.nn.rnn_cell.BasicLSTMCell):
     """Basic LSTM recurrent network cell.
@@ -572,126 +572,135 @@ if __name__ == '__main__':
     save_model = False
     batch_num = 1
     hidden_num = 8
-    k_partition = 120
+    k_partition = 800
     iteration = 100
     cell_type = 1
     ensemble_space = 20
     learning_rate = 1e-3
 
-    # dataset=2
-    # if dataset == 1:
-    #     elem_num = 34
-    #     _file_name = r"data/ionosphere.txt"
-    #     print(_file_name)
-    #     abnormal_data= np.loadtxt(_file_name, delimiter=",", usecols=np.arange(0, 34))
-    #     abnormal_label = np.loadtxt(_file_name, delimiter=",", usecols=(-1,))
-    #     # abnormal_label = np.expand_dims(abnormal_label, axis=1)
-    # else:
-    #     elem_num = 166
-    #     _file_name = r"data/clean2.data"
-    #     print(_file_name)
-    #     X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=',')
-    #     abnormal_data = X.iloc[:, 2:168].as_matrix()
-    #     abnormal_label = X.iloc[:, 168].as_matrix()
-    #     # abnormal_label = np.expand_dims(abnormal_label, axis=1)
-    #
-    # if _normalize == True:
-    #     scaler = MinMaxScaler(feature_range=(0, 1))
-    #     abnormal_data = scaler.fit_transform(abnormal_data)
-    # abnormal_label[abnormal_label == 1] = -1
-    # abnormal_label[abnormal_label == 0] = 1
-    # if multivariate:
-    #     abnormal_data = np.expand_dims(abnormal_data, axis=0)
-    #
-    # s_precision = []
-    # s_recall = []
-    # s_f1 = []
-    # s_roc_auc = []
-    # s_pr_auc = []
-    # s_cks = []
-    # if partition:
-    #     splitted_data, splitted_label = PartitionTimeSeriesKPart(abnormal_data,
-    #                                                              abnormal_label,
-    #                                                              _part_number=k_partition)
-    #     final_error = []
-    #     for i in range(k_partition):
-    #         print("一共{0}块，这是第{1}块".format(k_partition,i))
-    #         error_partition, precision_partition, recall_partition, f1_partition, roc_auc_partition, pr_auc_partition, cks = RunModel(
-    #             splitted_data[i], splitted_label[i], hidden_num, elem_num,
-    #             _file_name=os.path.splitext(os.path.basename(_file_name))[0], _partition=i)
-    #         final_error.append(error_partition)
-    #     # print('-----------------------------------------')
-    #     final_error = np.concatenate(final_error).ravel()
-    #     final_zscore = Z_Score(final_error)
-    #     y_pred = CreateLabelBasedOnZscore(final_zscore, 0.5)
-    #     print('abnormal_label:{0}'.format(abnormal_label))
-    #     print('abnormal_label:{0}'.format(Counter(abnormal_label)))
-    #     print('y_pred:{0}'.format(y_pred))
-    #     print('y_pred:{0}'.format(Counter(y_pred)))
-    #
-    #     result_temp = []
-    #     temp_list = [5, 10, 30,60,90,120,130,140,150,200,300,340]
-    #     max_pred = Counter(y_pred)[-1]
-    #     print('max_pred:{0}'.format(max_pred))
-    #     for m in temp_list:
-    #         m_count = 0
-    #         real_count = 0
-    #         if m > max_pred:
-    #             m = max_pred
-    #         for index, j in enumerate(y_pred):
-    #              if m_count < m:
-    #                 if j == -1:
-    #                     m_count += 1
-    #                     if abnormal_label[index] == -1:
-    #                         real_count += 1
-    #                 if index == len(y_pred) - 1:
-    #                     result_temp.append(real_count)
-    #              else:
-    #                 result_temp.append(real_count)
-    #                 break
-    #     print('result_temp:{0}'.format(result_temp))
-    #
-    #     precision, recall, f1 = CalculatePrecisionRecallF1Metrics(abnormal_label, y_pred)
-    #     PrintPrecisionRecallF1Metrics(precision, recall, f1)
-    #     _, _, roc_auc = CalculateROCAUCMetrics(abnormal_label, final_error)
-    #     print('roc_auc=' + str(roc_auc))
-    #     _, _, pr_auc = CalculatePrecisionRecallCurve(abnormal_label, final_error)
-    #     print('pr_auc=' + str(pr_auc))
-    #     cks = CalculateCohenKappaMetrics(abnormal_label, y_pred)
-    #     print('cohen_kappa=' + str(cks))
-    # else:
-    #     error, precision, recall, f1, roc_auc, pr_auc, cks = RunModel(abnormal_data,
-    #                                                                   abnormal_label,
-    #                                                                   hidden_num, elem_num)
-    #
-    # s_precision.append(precision)
-    # s_recall.append(recall)
-    # s_f1.append(f1)
-    # s_roc_auc.append(roc_auc)
-    # s_pr_auc.append(pr_auc)
-    # s_cks.append(cks)
-    # print('########################################')
-    # avg_precision = CalculateAverageMetric(s_precision)
-    # print('avg_precision=' + str(avg_precision))
-    # avg_recall = CalculateAverageMetric(s_recall)
-    # print('avg_recall=' + str(avg_recall))
-    # avg_f1 = CalculateAverageMetric(s_f1)
-    # print('avg_f1=' + str(avg_f1))
-    # avg_roc_auc = CalculateAverageMetric(s_roc_auc)
-    # print('avg_roc_auc=' + str(avg_roc_auc))
-    # avg_pr_auc = CalculateAverageMetric(s_pr_auc)
-    # print('avg_pr_auc=' + str(avg_pr_auc))
-    # avg_cks = CalculateAverageMetric(s_cks)
-    # print('avg_cks=' + str(avg_cks))
-    # print('########################################')
+    dataset=2
+    if dataset == 1:
+        elem_num = 34
+        _file_name = r"data/ionosphere.txt"
+        print('当前数据集是：{0}'.format(_file_name))
+        t1 = datetime.datetime.now()
+        print('从当前时间开始:{0}'.format(t1))
+        abnormal_data= np.loadtxt(_file_name, delimiter=",", usecols=np.arange(0, 34))
+        abnormal_label = np.loadtxt(_file_name, delimiter=",", usecols=(-1,))
+        # abnormal_label = np.expand_dims(abnormal_label, axis=1)
+    else:
+        elem_num = 166
+        _file_name = r"data/clean2.data"
+        print('当前数据集是：{0}'.format(_file_name))
+        t1 = datetime.datetime.now()
+        print('从当前时间开始:{0}'.format(t1))
+        X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=',')
+        abnormal_data = X.iloc[:, 2:168].as_matrix()
+        abnormal_label = X.iloc[:, 168].as_matrix()
+        # abnormal_label = np.expand_dims(abnormal_label, axis=1)
+
+    if _normalize == True:
+        scaler = MinMaxScaler(feature_range=(0, 1))
+        abnormal_data = scaler.fit_transform(abnormal_data)
+    abnormal_label[abnormal_label == 1] = -1
+    abnormal_label[abnormal_label == 0] = 1
+    if multivariate:
+        abnormal_data = np.expand_dims(abnormal_data, axis=0)
+
+    s_precision = []
+    s_recall = []
+    s_f1 = []
+    s_roc_auc = []
+    s_pr_auc = []
+    s_cks = []
+    if partition:
+        splitted_data, splitted_label = PartitionTimeSeriesKPart(abnormal_data,
+                                                                 abnormal_label,
+                                                                 _part_number=k_partition)
+        final_error = []
+        for i in range(k_partition):
+            print("一共{0}块，这是第{1}块".format(k_partition,i))
+            error_partition, precision_partition, recall_partition, f1_partition, roc_auc_partition, pr_auc_partition, cks = RunModel(
+                splitted_data[i], splitted_label[i], hidden_num, elem_num,
+                _file_name=os.path.splitext(os.path.basename(_file_name))[0], _partition=i)
+            final_error.append(error_partition)
+        # print('-----------------------------------------')
+        final_error = np.concatenate(final_error).ravel()
+        final_zscore = Z_Score(final_error)
+        y_pred = CreateLabelBasedOnZscore(final_zscore, 0.5)
+        print('abnormal_label:{0}'.format(abnormal_label))
+        print('abnormal_label:{0}'.format(Counter(abnormal_label)))
+        print('y_pred:{0}'.format(y_pred))
+        print('y_pred:{0}'.format(Counter(y_pred)))
+
+        result_temp = []
+        temp_list = [5, 10, 30,60,90,120,130,140,150,200,300,340]
+        max_pred = Counter(y_pred)[-1]
+        print('max_pred:{0}'.format(max_pred))
+        for m in temp_list:
+            m_count = 0
+            real_count = 0
+            if m > max_pred:
+                m = max_pred
+            for index, j in enumerate(y_pred):
+                 if m_count < m:
+                    if j == -1:
+                        m_count += 1
+                        if abnormal_label[index] == -1:
+                            real_count += 1
+                    if index == len(y_pred) - 1:
+                        result_temp.append(real_count)
+                 else:
+                    result_temp.append(real_count)
+                    break
+        print('result_temp:{0}'.format(result_temp))
+
+        precision, recall, f1 = CalculatePrecisionRecallF1Metrics(abnormal_label, y_pred)
+        PrintPrecisionRecallF1Metrics(precision, recall, f1)
+        _, _, roc_auc = CalculateROCAUCMetrics(abnormal_label, final_error)
+        print('roc_auc=' + str(roc_auc))
+        _, _, pr_auc = CalculatePrecisionRecallCurve(abnormal_label, final_error)
+        print('pr_auc=' + str(pr_auc))
+        cks = CalculateCohenKappaMetrics(abnormal_label, y_pred)
+        print('cohen_kappa=' + str(cks))
+    else:
+        error, precision, recall, f1, roc_auc, pr_auc, cks = RunModel(abnormal_data,
+                                                                      abnormal_label,
+                                                                      hidden_num, elem_num)
+
+    s_precision.append(precision)
+    s_recall.append(recall)
+    s_f1.append(f1)
+    s_roc_auc.append(roc_auc)
+    s_pr_auc.append(pr_auc)
+    s_cks.append(cks)
+    print('########################################')
+    avg_precision = CalculateAverageMetric(s_precision)
+    print('avg_precision=' + str(avg_precision))
+    avg_recall = CalculateAverageMetric(s_recall)
+    print('avg_recall=' + str(avg_recall))
+    avg_f1 = CalculateAverageMetric(s_f1)
+    print('avg_f1=' + str(avg_f1))
+    avg_roc_auc = CalculateAverageMetric(s_roc_auc)
+    print('avg_roc_auc=' + str(avg_roc_auc))
+    avg_pr_auc = CalculateAverageMetric(s_pr_auc)
+    print('avg_pr_auc=' + str(avg_pr_auc))
+    avg_cks = CalculateAverageMetric(s_cks)
+    print('avg_cks=' + str(avg_cks))
+
+    t2 = datetime.datetime.now()
+    print('从当前时间结束:{0}'.format(t2))
+    print('一共用时：{0}'.format(t2 - t1))
+    print('########################################')
 
     for n in range(1,4):
-        dataset = 2
+        dataset = 1
         if dataset==1:
             elem_num = 618
             _file_name = r"data/ISOLET-23/data_23.dat"
-            print(_file_name)
-            print('从当前时间开始:{0}'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+            print('当前数据集是：{0}'.format(_file_name))
+            t1 = datetime.datetime.now()
+            print('从当前时间开始:{0}'.format(t1))
             X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=',')
             abnormal_data = X.as_matrix()
 
@@ -790,13 +799,18 @@ if __name__ == '__main__':
             print('avg_pr_auc=' + str(avg_pr_auc))
             avg_cks = CalculateAverageMetric(s_cks)
             print('avg_cks=' + str(avg_cks))
+
+            t2 = datetime.datetime.now()
+            print('从当前时间结束:{0}'.format(t2))
+            print('一共用时：{0}'.format(t2 - t1))
             print('########################################')
 
         if dataset==2:
             elem_num = 650
             _file_name = r"data/MF-3/data_3.dat"
-            print(_file_name)
-            print('从当前时间开始:{0}'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+            print('当前数据集是：{0}'.format(_file_name))
+            t1 = datetime.datetime.now()
+            print('从当前时间开始:{0}'.format(t1))
             X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=',')
             abnormal_data = X.as_matrix()
 
@@ -896,13 +910,18 @@ if __name__ == '__main__':
             print('avg_pr_auc=' + str(avg_pr_auc))
             avg_cks = CalculateAverageMetric(s_cks)
             print('avg_cks=' + str(avg_cks))
+
+            t2 = datetime.datetime.now()
+            print('从当前时间结束:{0}'.format(t2))
+            print('一共用时：{0}'.format(t2 - t1))
             print('########################################')
 
         if dataset==3:
             elem_num = 260
             _file_name = r"data/Arrhythmia_withoutdupl_05_v03.dat"
-            print(_file_name)
-            print('从当前时间开始:{0}'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+            print('当前数据集是：{0}'.format(_file_name))
+            t1 = datetime.datetime.now()
+            print('从当前时间开始:{0}'.format(t1))
             X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=' ')
             abnormal_data = X.iloc[:, :260].as_matrix()
             abnormal_label = X.iloc[:, 260].as_matrix()
@@ -998,4 +1017,8 @@ if __name__ == '__main__':
             print('avg_pr_auc=' + str(avg_pr_auc))
             avg_cks = CalculateAverageMetric(s_cks)
             print('avg_cks=' + str(avg_cks))
+
+            t2 = datetime.datetime.now()
+            print('从当前时间结束:{0}'.format(t2))
+            print('一共用时：{0}'.format(t2 - t1))
             print('########################################')

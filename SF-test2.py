@@ -7,6 +7,7 @@ from utils import *
 from tensorflow.contrib import seq2seq
 import time
 from collections import Counter
+import datetime
 
 class RLSTMCell(tf.nn.rnn_cell.BasicLSTMCell):
     """Basic LSTM recurrent network cell.
@@ -571,7 +572,7 @@ if __name__ == '__main__':
     save_model = False
     batch_num = 1
     hidden_num = 8
-    k_partition = 300
+    k_partition = 120
     iteration = 100
     cell_type = 1
     ensemble_space = 20
@@ -580,14 +581,19 @@ if __name__ == '__main__':
     # dataset=2
     # if dataset == 1:
     #     elem_num = 34
-    #     _file_name = r"data/ionosphere.txt"          # 0.5分割
-    #     print(_file_name)
+    #     _file_name = r"data/ionosphere.txt"
+    #     print('当前数据集是：{0}'.format(_file_name))
+    #     t1 = datetime.datetime.now()
+    #     print('从当前时间开始:{0}'.format(t1))
     #     abnormal_data= np.loadtxt(_file_name, delimiter=",", usecols=np.arange(0, 34))
     #     abnormal_label = np.loadtxt(_file_name, delimiter=",", usecols=(-1,))
     #     # abnormal_label = np.expand_dims(abnormal_label, axis=1)
     # else:
     #     elem_num = 166
     #     _file_name = r"data/clean2.data"
+    #     print('当前数据集是：{0}'.format(_file_name))
+    #     t1 = datetime.datetime.now()
+    #     print('从当前时间开始:{0}'.format(t1))
     #     X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=',')
     #     abnormal_data = X.iloc[:, 2:168].as_matrix()
     #     abnormal_label = X.iloc[:, 168].as_matrix()
@@ -622,14 +628,15 @@ if __name__ == '__main__':
     #     final_error = np.concatenate(final_error).ravel()
     #     final_zscore = Z_Score(final_error)
     #     y_pred = CreateLabelBasedOnZscore(final_zscore, 0.5)
-    #     print(abnormal_label)
-    #     print(Counter(abnormal_label))
-    #     print(y_pred)
-    #     print(Counter(y_pred))
+    #     print('abnormal_label:{0}'.format(abnormal_label))
+    #     print('abnormal_label:{0}'.format(Counter(abnormal_label)))
+    #     print('y_pred:{0}'.format(y_pred))
+    #     print('y_pred:{0}'.format(Counter(y_pred)))
     #
     #     result_temp = []
     #     temp_list = [5, 10, 30,60,90,120,130,140,150,200,300,340]
-    #     max_pred = Counter(abnormal_label)[-1]
+    #     max_pred = Counter(y_pred)[-1]
+    #     print('max_pred:{0}'.format(max_pred))
     #     for m in temp_list:
     #         m_count = 0
     #         real_count = 0
@@ -646,7 +653,7 @@ if __name__ == '__main__':
     #              else:
     #                 result_temp.append(real_count)
     #                 break
-    #     print(result_temp)
+    #     print('result_temp:{0}'.format(result_temp))
     #
     #     precision, recall, f1 = CalculatePrecisionRecallF1Metrics(abnormal_label, y_pred)
     #     PrintPrecisionRecallF1Metrics(precision, recall, f1)
@@ -680,16 +687,20 @@ if __name__ == '__main__':
     # print('avg_pr_auc=' + str(avg_pr_auc))
     # avg_cks = CalculateAverageMetric(s_cks)
     # print('avg_cks=' + str(avg_cks))
+    #
+    # t2 = datetime.datetime.now()
+    # print('从当前时间结束:{0}'.format(t2))
+    # print('一共用时：{0}'.format(t2 - t1))
     # print('########################################')
 
-
     for n in range(1,4):
-        dataset = 2
+        dataset = 1
         if dataset==1:
             elem_num = 618
             _file_name = r"data/ISOLET-23/data_23.dat"
-            print(_file_name)
-            print('从当前时间开始:{0}'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+            print('当前数据集是：{0}'.format(_file_name))
+            t1 = datetime.datetime.now()
+            print('从当前时间开始:{0}'.format(t1))
             X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=',')
             abnormal_data = X.as_matrix()
 
@@ -730,7 +741,7 @@ if __name__ == '__main__':
                 y_pred = CreateLabelBasedOnZscore(final_zscore, 1)
 
                 print('abnormal_label:{0}'.format(abnormal_label))
-                print('anomaly_label:{0}'.format(Counter(abnormal_label)))
+                print('abnormal_label:{0}'.format(Counter(abnormal_label)))
                 print('y_pred:{0}'.format(y_pred))
                 print('y_pred:{0}'.format(Counter(y_pred)))
 
@@ -788,14 +799,18 @@ if __name__ == '__main__':
             print('avg_pr_auc=' + str(avg_pr_auc))
             avg_cks = CalculateAverageMetric(s_cks)
             print('avg_cks=' + str(avg_cks))
-            print('从当前时间结束:{0}'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+
+            t2 = datetime.datetime.now()
+            print('从当前时间结束:{0}'.format(t2))
+            print('一共用时：{0}'.format(t2 - t1))
             print('########################################')
 
         if dataset==2:
             elem_num = 650
             _file_name = r"data/MF-3/data_3.dat"
-            print(_file_name)
-            print('从当前时间开始:{0}'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+            print('当前数据集是：{0}'.format(_file_name))
+            t1 = datetime.datetime.now()
+            print('从当前时间开始:{0}'.format(t1))
             X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=',')
             abnormal_data = X.as_matrix()
 
@@ -839,7 +854,6 @@ if __name__ == '__main__':
                 print('abnormal_label:{0}'.format(Counter(abnormal_label)))
                 print('y_pred:{0}'.format(y_pred))
                 print('y_pred:{0}'.format(Counter(y_pred)))
-
                 result_temp = []
                 temp_list = [20, 30, 50, 60, 90, 100, 150]
                 max_pred = Counter(y_pred)[-1]
@@ -896,14 +910,18 @@ if __name__ == '__main__':
             print('avg_pr_auc=' + str(avg_pr_auc))
             avg_cks = CalculateAverageMetric(s_cks)
             print('avg_cks=' + str(avg_cks))
-            print('从当前时间结束:{0}'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+
+            t2 = datetime.datetime.now()
+            print('从当前时间结束:{0}'.format(t2))
+            print('一共用时：{0}'.format(t2 - t1))
             print('########################################')
 
         if dataset==3:
             elem_num = 260
             _file_name = r"data/Arrhythmia_withoutdupl_05_v03.dat"
-            print(_file_name)
-            print('从当前时间开始:{0}'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+            print('当前数据集是：{0}'.format(_file_name))
+            t1 = datetime.datetime.now()
+            print('从当前时间开始:{0}'.format(t1))
             X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=' ')
             abnormal_data = X.iloc[:, :260].as_matrix()
             abnormal_label = X.iloc[:, 260].as_matrix()
@@ -938,17 +956,17 @@ if __name__ == '__main__':
                 # print('-----------------------------------------')
                 final_error = np.concatenate(final_error).ravel()
                 final_zscore = Z_Score(final_error)
-                y_pred = CreateLabelBasedOnZscore(final_zscore, 1.12)
+                y_pred = CreateLabelBasedOnZscore(final_zscore, 0.45)
+
                 print('abnormal_label:{0}'.format(abnormal_label))
-                print('anomaly_label:{0}'.format(Counter(abnormal_label)))
+                print('abnormal_label:{0}'.format(Counter(abnormal_label)))
                 print('y_pred:{0}'.format(y_pred))
                 print('y_pred:{0}'.format(Counter(y_pred)))
-
                 result_temp = []
                 temp_list = [5, 10, 15, 25, 30, 35, 45, 50, 55, 60, 80, 90, 100, 110, 120, 140, 150, 160, 170, 180, 190,
                              200]
                 max_pred = Counter(y_pred)[-1]
-                print('max_pred:{0}'.format(max_pred))
+                print('max_pre:{0}'.format(max_pred))
                 for m in temp_list:
                     m_count = 0
                     real_count = 0
@@ -956,9 +974,9 @@ if __name__ == '__main__':
                         m = max_pred
                     for index, j in enumerate(y_pred):
                          if m_count < m:
-                            if j == 1:
+                            if j == -1:
                                 m_count += 1
-                                if abnormal_label[index] == 1:
+                                if abnormal_label[index] == -1:
                                     real_count += 1
                             if index == len(y_pred) - 1:
                                 result_temp.append(real_count)
@@ -999,5 +1017,8 @@ if __name__ == '__main__':
             print('avg_pr_auc=' + str(avg_pr_auc))
             avg_cks = CalculateAverageMetric(s_cks)
             print('avg_cks=' + str(avg_cks))
-            print('从当前时间结束:{0}'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+
+            t2 = datetime.datetime.now()
+            print('从当前时间结束:{0}'.format(t2))
+            print('一共用时：{0}'.format(t2 - t1))
             print('########################################')

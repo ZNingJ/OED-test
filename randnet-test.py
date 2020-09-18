@@ -6,7 +6,7 @@ import pandas as pd
 import tensorflow as tf
 from utils import *
 from collections import Counter
-import time
+import datetime
 
 def Model(_abnormal_data, _abnormal_label, _hidden_num, _file_name):
     tf.reset_default_graph()
@@ -109,6 +109,9 @@ def RunModel(_abnormal_data, _abnormal_label, _hidden_num, _file_name):
     precision_curve, recall_curve, average_precision = CalculatePrecisionRecallCurve(_abnormal_label, anomaly_score)
     cks = CalculateCohenKappaMetrics(_abnormal_label, y_pred)
 
+    t2=datetime.datetime.now()
+    print('从当前时间结束:{0}'.format(t2))
+    print('一共用时：{0}'.format(t2-t1))
     return anomaly_score, precision, recall, f1, roc_auc, average_precision, cks
 
 if __name__ == '__main__':
@@ -124,15 +127,17 @@ if __name__ == '__main__':
     dataset = 2
     if dataset == 1:
         _file_name = r"data/ionosphere.txt"
-        print(_file_name)
-        print('从当前时间开始:{0}'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+        print('当前数据集是：{0}'.format(_file_name))
+        t1=datetime.datetime.now()
+        print('从当前时间开始:{0}'.format(t1))
         abnormal_data = np.loadtxt(_file_name, delimiter=",", usecols=np.arange(0, 34))
         abnormal_label = np.loadtxt(_file_name, delimiter=",", usecols=(-1,))
         # abnormal_label = np.expand_dims(abnormal_label, axis=1)
     else:
         _file_name = r"data/clean2.data"
-        print(_file_name)
-        print('从当前时间开始:{0}'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+        print('当前数据集是：{0}'.format(_file_name))
+        t1 = datetime.datetime.now()
+        print('从当前时间开始:{0}'.format(t1))
         X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=',')
         abnormal_data = X.iloc[:, 2:168].as_matrix()
         abnormal_label = X.iloc[:, 168].as_matrix()
@@ -146,8 +151,9 @@ if __name__ == '__main__':
 
 
     # _file_name = r"data/ISOLET-23/data_23.dat"
-    # print(_file_name)
-    # print('从当前时间开始:{0}'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+    # print('当前数据集是：{0}'.format(_file_name))
+    # t1 = datetime.datetime.now()
+    # print('从当前时间开始:{0}'.format(t1))
     # X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=',')
     # abnormal_data = X.as_matrix()
     # y_loc = r"data/ISOLET-23/classid_23.dat"
@@ -161,8 +167,9 @@ if __name__ == '__main__':
     # abnormal_label[abnormal_label == 23] = -1
 
     # _file_name = r"data/MF-3/data_3.dat"
-    # print(_file_name)
-    # print('从当前时间开始:{0}'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+    # print('当前数据集是：{0}'.format(_file_name))
+    # t1 = datetime.datetime.now()
+    # print('从当前时间开始:{0}'.format(t1))
     # X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=',')
     # abnormal_data = X.as_matrix()
     # y_loc = r"data/MF-3/classid_3.dat"
@@ -176,8 +183,9 @@ if __name__ == '__main__':
     # abnormal_label[abnormal_label == 3] = -1
 
     # _file_name = r"data/Arrhythmia_withoutdupl_05_v03.dat"   #以2为分割点
-    # print(_file_name)
-    # print('从当前时间开始:{0}'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+    # print('当前数据集是：{0}'.format(_file_name))
+    # t1 = datetime.datetime.now()
+    # print('从当前时间开始:{0}'.format(t1))
     # X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=' ')
     # abnormal_data = X.iloc[:, :260].as_matrix()
     # abnormal_label = X.iloc[:, 260].as_matrix()

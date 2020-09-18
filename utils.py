@@ -314,8 +314,6 @@ def CreateLabelBasedOnReconstructionError(_error, _percent_of_outlier):
 
 def CreateLabelBasedOnZscore(_zscore, _threshold, _sign=False):
     label = np.full(_zscore.shape[0], 1)
-    print(_zscore)
-    print(label)
     if not _sign:
         label[_zscore > _threshold] = -1
         label[_zscore < -_threshold] = -1
