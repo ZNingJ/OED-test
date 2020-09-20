@@ -40,7 +40,7 @@ def Model(_abnormal_data, _abnormal_label, _hidden_num, _file_name):
 
     return g, p_input, dec_output_reshape, loss, optimizer, saver
 
-def RunModel(_abnormal_data, _abnormal_label, _hidden_num, _file_name):
+def RunModel(_abnormal_data, _abnormal_label, _hidden_num, _file_name,temp_list):
     error = []
     for j in range(ensemble_space):
         graph, p_input, dec_outputs, loss, optimizer, saver = Model(_abnormal_data, _abnormal_label, _hidden_num, _file_name)
@@ -76,37 +76,10 @@ def RunModel(_abnormal_data, _abnormal_label, _hidden_num, _file_name):
     anomaly_score = CalculateFinalAnomalyScore(ensemble_errors)
 
     zscore = Z_Score(anomaly_score)
-    # y_pred = CreateLabelBasedOnZscore(zscore, 0.5)
-    # print('_abnormal_label:{0}'.format(_abnormal_label))
     print('_abnormal_label:{0}'.format(Counter(_abnormal_label)))
-    # print('y_pred:{0}'.format(y_pred))
-    # print('y_pred:{0}'.format(Counter(y_pred)))
-
-    # result_temp=[]
-    # temp_list=[20,30,50,60,70,100,150]
-    # max_pred=Counter(y_pred)[-1]
-    # print('max_pred:{0}'.format(max_pred))
-    # for m in temp_list:
-    #     m_count=0
-    #     real_count=0
-    #     if m>max_pred:
-    #         m=max_pred
-    #     for index, j in enumerate(y_pred):
-    #         if m_count<m:
-    #             if j == -1:
-    #                 m_count += 1
-    #                 if _abnormal_label[index] == -1:
-    #                     real_count += 1
-    #             if index == len(y_pred) - 1:
-    #                 result_temp.append(real_count)
-    #         else:
-    #             result_temp.append(real_count)
-    #             break
-    # print(result_temp)
-
     zscore_abs = np.fabs(zscore)
     result_temp = []
-    temp_list = [20,30,50,60,90,100,150]
+    print('m的取值有：{0}'.format(temp_list))
     for m in temp_list:
         count=0
         index = np.argpartition(zscore_abs, -m)[-m:]
@@ -116,15 +89,10 @@ def RunModel(_abnormal_data, _abnormal_label, _hidden_num, _file_name):
         result_temp.append(count)
     print(result_temp)
 
-    # precision, recall, f1 = CalculatePrecisionRecallF1Metrics(_abnormal_label, y_pred)
-    # fpr, tpr, roc_auc = CalculateROCAUCMetrics(_abnormal_label, anomaly_score)
-    # precision_curve, recall_curve, average_precision = CalculatePrecisionRecallCurve(_abnormal_label, anomaly_score)
-    # cks = CalculateCohenKappaMetrics(_abnormal_label, y_pred)
-
     t2=datetime.datetime.now()
     print('从当前时间结束:{0}'.format(t2))
     print('一共用时：{0}'.format(t2-t1))
-    return anomaly_score, precision, recall, f1, roc_auc, average_precision, cks
+    return anomaly_score, precision, recall, f1, roc_auc,precision , cks
 
 if __name__ == '__main__':
     batch_num = 1
@@ -136,123 +104,225 @@ if __name__ == '__main__':
     save_model = False
     _normalize = True
 
-    # dataset = 2
-    # if dataset == 1:
-    #     _file_name = r"data/ionosphere.txt"
-    #     print('当前数据集是：{0}'.format(_file_name))
-    #     t1=datetime.datetime.now()
-    #     print('从当前时间开始:{0}'.format(t1))
-    #     abnormal_data = np.loadtxt(_file_name, delimiter=",", usecols=np.arange(0, 34))
-    #     abnormal_label = np.loadtxt(_file_name, delimiter=",", usecols=(-1,))
-    #     abnormal_label[abnormal_label == 0] = -1
-    #     abnormal_label[abnormal_label == 1] = 1
-    #     # abnormal_label = np.expand_dims(abnormal_label, axis=1)
-    # else:
-    #     _file_name = r"data/clean2.data"
-    #     print('当前数据集是：{0}'.format(_file_name))
-    #     t1 = datetime.datetime.now()
-    #     print('从当前时间开始:{0}'.format(t1))
-    #     X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=',')
-    #     abnormal_data = X.iloc[:, 2:168].as_matrix()
-    #     abnormal_label = X.iloc[:, 168].as_matrix()
-    #     abnormal_label[abnormal_label == 1] = -1
-    #     abnormal_label[abnormal_label == 0] = 1
-    #     # abnormal_label = np.expand_dims(abnormal_label, axis=1)
-    #
-    # if _normalize == True:
-    #     scaler = MinMaxScaler(feature_range=(0, 1))
-    #     abnormal_data = scaler.fit_transform(abnormal_data)
+    for n in range(1,8):
+        dataset = 1
+        # 1-ionosphere,2-Musk2,3-ISOLET,4-MF-3,5-Arrhythmia,6-MF-5,7-MF-7
+        if dataset == 1:
+            _file_name = r"data/ionosphere.txt"
+            print('当前数据集是：{0}'.format(_file_name))
+            t1=datetime.datetime.now()
+            print('从当前时间开始:{0}'.format(t1))
+            abnormal_data = np.loadtxt(_file_name, delimiter=",", usecols=np.arange(0, 34))
+            abnormal_label = np.loadtxt(_file_name, delimiter=",", usecols=(-1,))
+            abnormal_label[abnormal_label == 0] = -1
+            abnormal_label[abnormal_label == 1] = 1
+            # abnormal_label = np.expand_dims(abnormal_label, axis=1)
 
-    # _file_name = r"data/ISOLET-23/data_23.dat"
-    # print('当前数据集是：{0}'.format(_file_name))
-    # t1 = datetime.datetime.now()
-    # print('从当前时间开始:{0}'.format(t1))
-    # X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=',')
-    # abnormal_data = X.as_matrix()
-    # y_loc = r"data/ISOLET-23/classid_23.dat"
-    # y = pd.read_csv(y_loc, header=None, index_col=None, skiprows=0, sep=',')
-    # abnormal_label = y.iloc[:, 0].as_matrix()
-    # # abnormal_label = np.expand_dims(abnormal_label, axis=1)
-    # if _normalize == True:
-    #     scaler = MinMaxScaler(feature_range=(0, 1))
-    #     abnormal_data = scaler.fit_transform(abnormal_data)
-    # abnormal_label[abnormal_label != 23] = 1
-    # abnormal_label[abnormal_label == 23] = -1
+            if _normalize == True:
+                scaler = MinMaxScaler(feature_range=(0, 1))
+                abnormal_data = scaler.fit_transform(abnormal_data)
+            temp_list=[5,10,30,60,90,120,130,140,150,200,300,340]
+            s_precision = []
+            s_recall = []
+            s_f1 = []
+            s_roc_auc = []
+            s_pr_auc = []
+            s_cks = []
+            error, precision, recall, f1, roc_auc, pr_auc, cks = RunModel(abnormal_data, abnormal_label, hidden_num,_file_name=_file_name,temp_list=temp_list)
+            s_precision.append(precision)
+            s_recall.append(recall)
+            s_f1.append(f1)
+            s_roc_auc.append(roc_auc)
+            s_pr_auc.append(pr_auc)
+            s_cks.append(cks)
 
-    _file_name = r"data/MF-3/data_3.dat"
-    print('当前数据集是：{0}'.format(_file_name))
-    t1 = datetime.datetime.now()
-    print('从当前时间开始:{0}'.format(t1))
-    X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=',')
-    abnormal_data = X.iloc[:, :649].as_matrix()
-    y_loc = r"data/MF-3/classid_3.dat"
-    y = pd.read_csv(y_loc, header=None, index_col=None, skiprows=0, sep=',')
-    abnormal_label = y.iloc[:, 0].as_matrix()
-    # abnormal_label = np.expand_dims(abnormal_label, axis=1)
-    if _normalize == True:
-        scaler = MinMaxScaler(feature_range=(0, 1))
-        abnormal_data = scaler.fit_transform(abnormal_data)
-    abnormal_label[abnormal_label != 3] = 1
-    abnormal_label[abnormal_label == 3] = -1
+        if dataset==2:
+            _file_name = r"data/clean2.data"
+            print('当前数据集是：{0}'.format(_file_name))
+            t1 = datetime.datetime.now()
+            print('从当前时间开始:{0}'.format(t1))
+            X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=',')
+            abnormal_data = X.iloc[:, 2:168].as_matrix()
+            abnormal_label = X.iloc[:, 168].as_matrix()
+            abnormal_label[abnormal_label == 1] = -1
+            abnormal_label[abnormal_label == 0] = 1
+            # abnormal_label = np.expand_dims(abnormal_label, axis=1)
 
-    # _file_name = r"data/Arrhythmia_withoutdupl_05_v03.dat"   #以2为分割点
-    # print('当前数据集是：{0}'.format(_file_name))
-    # t1 = datetime.datetime.now()
-    # print('从当前时间开始:{0}'.format(t1))
-    # X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=' ')
-    # abnormal_data = X.iloc[:, :260].as_matrix()
-    # abnormal_label = X.iloc[:, 260].as_matrix()
-    # # abnormal_label = np.expand_dims(abnormal_label, axis=1)
-    # if _normalize == True:
-    #     scaler = MinMaxScaler(feature_range=(0, 1))
-    #     abnormal_data = scaler.fit_transform(abnormal_data)
-    # abnormal_label[abnormal_label == 1] = -1
-    # abnormal_label[abnormal_label == 0] = 1
+            if _normalize == True:
+                scaler = MinMaxScaler(feature_range=(0, 1))
+                abnormal_data = scaler.fit_transform(abnormal_data)
+            temp_list=[1000,2000,3000,4000,5000,6000,6598]
+            s_precision = []
+            s_recall = []
+            s_f1 = []
+            s_roc_auc = []
+            s_pr_auc = []
+            s_cks = []
+            error, precision, recall, f1, roc_auc, pr_auc, cks = RunModel(abnormal_data, abnormal_label, hidden_num,
+                                                                          _file_name=_file_name,temp_list=temp_list)
+            s_precision.append(precision)
+            s_recall.append(recall)
+            s_f1.append(f1)
+            s_roc_auc.append(roc_auc)
+            s_pr_auc.append(pr_auc)
+            s_cks.append(cks)
 
-    # _file_name = r"data/MF-5/data_5.dat"     #以2为分割点
-    # print('当前数据集是：{0}'.format(_file_name))
-    # t1 = datetime.datetime.now()
-    # print('从当前时间开始:{0}'.format(t1))
-    # X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=',')
-    # abnormal_data = X.iloc[:, :649].as_matrix()
-    # y_loc = r"data/MF-5/classid_5.dat"
-    # y = pd.read_csv(y_loc, header=None, index_col=None, skiprows=0, sep=',')
-    # abnormal_label = y.iloc[:, 0].as_matrix()
-    #
-    # # abnormal_label = np.expand_dims(abnormal_label, axis=1)
-    # if _normalize == True:
-    #     scaler = MinMaxScaler(feature_range=(0, 1))
-    #     abnormal_data = scaler.fit_transform(abnormal_data)
-    # abnormal_label[abnormal_label != 5] = 1
-    # abnormal_label[abnormal_label == 5] = -1
+        if dataset==3:
+            _file_name = r"data/ISOLET-23/data_23.dat"
+            print('当前数据集是：{0}'.format(_file_name))
+            t1 = datetime.datetime.now()
+            print('从当前时间开始:{0}'.format(t1))
+            X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=',')
+            abnormal_data = X.as_matrix()
+            y_loc = r"data/ISOLET-23/classid_23.dat"
+            y = pd.read_csv(y_loc, header=None, index_col=None, skiprows=0, sep=',')
+            abnormal_label = y.iloc[:, 0].as_matrix()
+            # abnormal_label = np.expand_dims(abnormal_label, axis=1)
+            if _normalize == True:
+                scaler = MinMaxScaler(feature_range=(0, 1))
+                abnormal_data = scaler.fit_transform(abnormal_data)
+            abnormal_label[abnormal_label != 23] = 1
+            abnormal_label[abnormal_label == 23] = -1
+            temp_list=[5,10,15,20,30,50,60,80,100,150]
+            s_precision = []
+            s_recall = []
+            s_f1 = []
+            s_roc_auc = []
+            s_pr_auc = []
+            s_cks = []
+            error, precision, recall, f1, roc_auc, pr_auc, cks = RunModel(abnormal_data, abnormal_label, hidden_num,
+                                                                          _file_name=_file_name,temp_list=temp_list)
+            s_precision.append(precision)
+            s_recall.append(recall)
+            s_f1.append(f1)
+            s_roc_auc.append(roc_auc)
+            s_pr_auc.append(pr_auc)
+            s_cks.append(cks)
 
+        if dataset==4:
+            _file_name = r"data/MF-3/data_3.dat"
+            print('当前数据集是：{0}'.format(_file_name))
+            t1 = datetime.datetime.now()
+            print('从当前时间开始:{0}'.format(t1))
+            X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=',')
+            abnormal_data = X.iloc[:, :649].as_matrix()
+            y_loc = r"data/MF-3/classid_3.dat"
+            y = pd.read_csv(y_loc, header=None, index_col=None, skiprows=0, sep=',')
+            abnormal_label = y.iloc[:, 0].as_matrix()
+            # abnormal_label = np.expand_dims(abnormal_label, axis=1)
+            if _normalize == True:
+                scaler = MinMaxScaler(feature_range=(0, 1))
+                abnormal_data = scaler.fit_transform(abnormal_data)
+            abnormal_label[abnormal_label != 3] = 1
+            abnormal_label[abnormal_label == 3] = -1
+            temp_list=[20,30,50,60,90,100,150]
+            s_precision = []
+            s_recall = []
+            s_f1 = []
+            s_roc_auc = []
+            s_pr_auc = []
+            s_cks = []
+            error, precision, recall, f1, roc_auc, pr_auc, cks = RunModel(abnormal_data, abnormal_label, hidden_num,
+                                                                          _file_name=_file_name,temp_list=temp_list)
+            s_precision.append(precision)
+            s_recall.append(recall)
+            s_f1.append(f1)
+            s_roc_auc.append(roc_auc)
+            s_pr_auc.append(pr_auc)
+            s_cks.append(cks)
 
-    s_precision = []
-    s_recall = []
-    s_f1 = []
-    s_roc_auc = []
-    s_pr_auc = []
-    s_cks = []
-    error, precision, recall, f1, roc_auc, pr_auc, cks = RunModel(abnormal_data, abnormal_label, hidden_num,
-                                                                  _file_name=_file_name)
-    s_precision.append(precision)
-    s_recall.append(recall)
-    s_f1.append(f1)
-    s_roc_auc.append(roc_auc)
-    s_pr_auc.append(pr_auc)
-    s_cks.append(cks)
+        if dataset==5:
+            _file_name = r"data/Arrhythmia_withoutdupl_05_v03.dat"   #以2为分割点
+            print('当前数据集是：{0}'.format(_file_name))
+            t1 = datetime.datetime.now()
+            print('从当前时间开始:{0}'.format(t1))
+            X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=' ')
+            abnormal_data = X.iloc[:, :260].as_matrix()
+            abnormal_label = X.iloc[:, 260].as_matrix()
+            # abnormal_label = np.expand_dims(abnormal_label, axis=1)
+            if _normalize == True:
+                scaler = MinMaxScaler(feature_range=(0, 1))
+                abnormal_data = scaler.fit_transform(abnormal_data)
+            abnormal_label[abnormal_label == 1] = -1
+            abnormal_label[abnormal_label == 0] = 1
+            temp_list=[5,10,15,25,30,35,45,50,55,60,80,90,100,110,120,140,150,160,170,180,190,200]
+            s_precision = []
+            s_recall = []
+            s_f1 = []
+            s_roc_auc = []
+            s_pr_auc = []
+            s_cks = []
+            error, precision, recall, f1, roc_auc, pr_auc, cks = RunModel(abnormal_data, abnormal_label, hidden_num,
+                                                                          _file_name=_file_name,temp_list=temp_list)
+            s_precision.append(precision)
+            s_recall.append(recall)
+            s_f1.append(f1)
+            s_roc_auc.append(roc_auc)
+            s_pr_auc.append(pr_auc)
+            s_cks.append(cks)
 
-    print('########################################')
-    avg_precision = CalculateAverageMetric(s_precision)
-    print('avg_precision=' + str(avg_precision))
-    avg_recall = CalculateAverageMetric(s_recall)
-    print('avg_recall=' + str(avg_recall))
-    avg_f1 = CalculateAverageMetric(s_f1)
-    print('avg_f1=' + str(avg_f1))
-    avg_roc_auc = CalculateAverageMetric(s_roc_auc)
-    print('avg_roc_auc=' + str(avg_roc_auc))
-    avg_pr_auc = CalculateAverageMetric(s_pr_auc)
-    print('avg_pr_auc=' + str(avg_pr_auc))
-    avg_cks = CalculateAverageMetric(s_cks)
-    print('avg_cks=' + str(avg_cks))
-    print('########################################')
+        if dataset==6:
+            _file_name = r"data/MF-5/data_5.dat"
+            print('当前数据集是：{0}'.format(_file_name))
+            t1 = datetime.datetime.now()
+            print('从当前时间开始:{0}'.format(t1))
+            X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=',')
+            abnormal_data = X.iloc[:, :649].as_matrix()
+            y_loc = r"data/MF-5/classid_5.dat"
+            y = pd.read_csv(y_loc, header=None, index_col=None, skiprows=0, sep=',')
+            abnormal_label = y.iloc[:, 0].as_matrix()
+
+            # abnormal_label = np.expand_dims(abnormal_label, axis=1)
+            if _normalize == True:
+                scaler = MinMaxScaler(feature_range=(0, 1))
+                abnormal_data = scaler.fit_transform(abnormal_data)
+            abnormal_label[abnormal_label != 5] = 1
+            abnormal_label[abnormal_label == 5] = -1
+            temp_list=[20,30,50,60,70,100,150]
+            s_precision = []
+            s_recall = []
+            s_f1 = []
+            s_roc_auc = []
+            s_pr_auc = []
+            s_cks = []
+            error, precision, recall, f1, roc_auc, pr_auc, cks = RunModel(abnormal_data, abnormal_label, hidden_num,
+                                                                          _file_name=_file_name,temp_list=temp_list)
+            s_precision.append(precision)
+            s_recall.append(recall)
+            s_f1.append(f1)
+            s_roc_auc.append(roc_auc)
+            s_pr_auc.append(pr_auc)
+            s_cks.append(cks)
+
+        if dataset==7:
+            _file_name = r"data/MF-7/data_7.dat"
+            print('当前数据集是：{0}'.format(_file_name))
+            t1 = datetime.datetime.now()
+            print('从当前时间开始:{0}'.format(t1))
+            X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=',')
+            abnormal_data = X.iloc[:, :649].as_matrix()
+            y_loc = r"data/MF-7/classid_7.dat"
+            y = pd.read_csv(y_loc, header=None, index_col=None, skiprows=0, sep=',')
+            abnormal_label = y.iloc[:, 0].as_matrix()
+
+            # abnormal_label = np.expand_dims(abnormal_label, axis=1)
+            if _normalize == True:
+                scaler = MinMaxScaler(feature_range=(0, 1))
+                abnormal_data = scaler.fit_transform(abnormal_data)
+            abnormal_label[abnormal_label != 7] = 1
+            abnormal_label[abnormal_label == 7] = -1
+            temp_list=[20,30,50,60,90,100,150]
+            s_precision = []
+            s_recall = []
+            s_f1 = []
+            s_roc_auc = []
+            s_pr_auc = []
+            s_cks = []
+            error, precision, recall, f1, roc_auc, pr_auc, cks = RunModel(abnormal_data, abnormal_label, hidden_num,
+                                                                          _file_name=_file_name,temp_list=temp_list)
+            s_precision.append(precision)
+            s_recall.append(recall)
+            s_f1.append(f1)
+            s_roc_auc.append(roc_auc)
+            s_pr_auc.append(pr_auc)
+            s_cks.append(cks)
