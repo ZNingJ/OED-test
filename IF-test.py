@@ -10,9 +10,6 @@ from utils import *
 from collections import Counter
 from tensorflow.contrib import seq2seq
 
-import os
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
-
 
 class RLSTMCell(tf.nn.rnn_cell.BasicLSTMCell):
     """Basic LSTM recurrent network cell.
@@ -510,7 +507,7 @@ if __name__ == '__main__':
     learning_rate = 1e-3
 
     for n in range(1,8):
-        dataset = 4
+        dataset = 3
         # 1-ionosphere,2-Musk2,3-ISOLET,4-MF-3,5-Arrhythmia,6-MF-5,7-MF-7
         if dataset == 1:
             elem_num = 34
@@ -528,12 +525,6 @@ if __name__ == '__main__':
             if multivariate:
                 abnormal_data = np.expand_dims(abnormal_data, axis=0)
 
-            s_precision = []
-            s_recall = []
-            s_f1 = []
-            s_roc_auc = []
-            s_pr_auc = []
-            s_cks = []
             if partition:
                 splitted_data, splitted_label = PartitionTimeSeriesKPart(abnormal_data,
                                                                          abnormal_label,
@@ -589,13 +580,6 @@ if __name__ == '__main__':
                 abnormal_data = scaler.fit_transform(abnormal_data)
             if multivariate:
                 abnormal_data = np.expand_dims(abnormal_data, axis=0)
-
-            s_precision = []
-            s_recall = []
-            s_f1 = []
-            s_roc_auc = []
-            s_pr_auc = []
-            s_cks = []
             if partition:
                 splitted_data, splitted_label = PartitionTimeSeriesKPart(abnormal_data,
                                                                          abnormal_label,
@@ -636,18 +620,17 @@ if __name__ == '__main__':
             print('########################################')
 
         if dataset==3:
-            elem_num = 618
+            elem_num = 617
             _file_name = r"data/ISOLET-23/data_23.dat"
             print('当前数据集是：{0}'.format(_file_name))
             t1 = datetime.datetime.now()
             print('从当前时间开始:{0}'.format(t1))
             X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=',')
-            abnormal_data = X.as_matrix()
+            abnormal_data = X.iloc[:, 0:167].as_matrix()
 
             y_loc = r"data/ISOLET-23/classid_23.dat"
             y = pd.read_csv(y_loc, header=None, index_col=None, skiprows=0, sep=',')
             abnormal_label = y.iloc[:, 0].as_matrix()
-            abnormal_label = np.expand_dims(abnormal_label, axis=1)
 
             if _normalize == True:
                 scaler = MinMaxScaler(feature_range=(0, 1))
@@ -657,12 +640,6 @@ if __name__ == '__main__':
             if multivariate:
                 abnormal_data = np.expand_dims(abnormal_data, axis=0)
 
-            s_precision = []
-            s_recall = []
-            s_f1 = []
-            s_roc_auc = []
-            s_pr_auc = []
-            s_cks = []
             if partition:
                 splitted_data, splitted_label = PartitionTimeSeriesKPart(abnormal_data,
                                                                          abnormal_label,
@@ -713,7 +690,6 @@ if __name__ == '__main__':
             y_loc = r"data/MF-3/classid_3.dat"
             y = pd.read_csv(y_loc, header=None, index_col=None, skiprows=0, sep=',')
             abnormal_label = y.iloc[:, 0].as_matrix()
-            # abnormal_label = np.expand_dims(abnormal_label, axis=1)
 
             if _normalize == True:
                 scaler = MinMaxScaler(feature_range=(0, 1))
@@ -724,12 +700,6 @@ if __name__ == '__main__':
             if multivariate:
                 abnormal_data = np.expand_dims(abnormal_data, axis=0)
 
-            s_precision = []
-            s_recall = []
-            s_f1 = []
-            s_roc_auc = []
-            s_pr_auc = []
-            s_cks = []
             if partition:
                 splitted_data, splitted_label = PartitionTimeSeriesKPart(abnormal_data,
                                                                          abnormal_label,
@@ -778,7 +748,6 @@ if __name__ == '__main__':
             X = pd.read_csv(_file_name, header=None, index_col=None, skiprows=0, sep=' ')
             abnormal_data = X.iloc[:, :260].as_matrix()
             abnormal_label = X.iloc[:, 260].as_matrix()
-            # abnormal_label = np.expand_dims(abnormal_label, axis=1)
 
             if _normalize == True:
                 scaler = MinMaxScaler(feature_range=(0, 1))
@@ -789,12 +758,6 @@ if __name__ == '__main__':
             if multivariate:
                 abnormal_data = np.expand_dims(abnormal_data, axis=0)
 
-            s_precision = []
-            s_recall = []
-            s_f1 = []
-            s_roc_auc = []
-            s_pr_auc = []
-            s_cks = []
             if partition:
                 splitted_data, splitted_label = PartitionTimeSeriesKPart(abnormal_data,
                                                                          abnormal_label,
@@ -845,7 +808,6 @@ if __name__ == '__main__':
             y = pd.read_csv(y_loc, header=None, index_col=None, skiprows=0, sep=',')
             abnormal_label = y.iloc[:, 0].as_matrix()
 
-            # abnormal_label = np.expand_dims(abnormal_label, axis=1)
             if _normalize == True:
                 scaler = MinMaxScaler(feature_range=(0, 1))
                 abnormal_data = scaler.fit_transform(abnormal_data)
@@ -854,12 +816,6 @@ if __name__ == '__main__':
             if multivariate:
                 abnormal_data = np.expand_dims(abnormal_data, axis=0)
 
-            s_precision = []
-            s_recall = []
-            s_f1 = []
-            s_roc_auc = []
-            s_pr_auc = []
-            s_cks = []
             if partition:
                 splitted_data, splitted_label = PartitionTimeSeriesKPart(abnormal_data,
                                                                          abnormal_label,
@@ -910,7 +866,6 @@ if __name__ == '__main__':
             y = pd.read_csv(y_loc, header=None, index_col=None, skiprows=0, sep=',')
             abnormal_label = y.iloc[:, 0].as_matrix()
 
-            # abnormal_label = np.expand_dims(abnormal_label, axis=1)
             if _normalize == True:
                 scaler = MinMaxScaler(feature_range=(0, 1))
                 abnormal_data = scaler.fit_transform(abnormal_data)
@@ -919,12 +874,6 @@ if __name__ == '__main__':
             if multivariate:
                 abnormal_data = np.expand_dims(abnormal_data, axis=0)
 
-            s_precision = []
-            s_recall = []
-            s_f1 = []
-            s_roc_auc = []
-            s_pr_auc = []
-            s_cks = []
             if partition:
                 splitted_data, splitted_label = PartitionTimeSeriesKPart(abnormal_data,
                                                                          abnormal_label,
